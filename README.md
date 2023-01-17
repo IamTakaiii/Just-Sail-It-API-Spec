@@ -5,4 +5,5 @@
 3. รันโดยใช้คำสั่ง `npm run doc`
 ### Link
 API doc `http:localhost:3000`
-Mock server  
+
+Mock server `http://127.0.0.1:4010/`
