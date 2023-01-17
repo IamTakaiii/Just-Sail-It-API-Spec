@@ -1,0 +1,286 @@
+openapi: "3.0.2"
+info:
+  title: Just Sail It - API Spec
+  description: สำหรับใช้ในการพัฒนาระบบของแพลตฟอร์ม Just Sail It
+  version: "1.0"
+servers:
+  - url: http://127.0.0.1:4010
+tags:
+  - name: Register & Auth
+    description: Authentication and Register
+  - name: User
+    description: Everything about User
+
+paths:
+# Auth and Register
+    /register:
+        'post':
+            tags:
+              - Register & Auth
+            summary: create new user account
+            operationId: register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                pubId:
+                                    $ref: '#/components/schemas/publicId'
+                                username:
+                                    type: string
+                                    example: 'Shia LaBeouf'
+                                email:
+                                    type: string
+                                    example: 'shia@hotmail.com'
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AuthRes'
+                '500':
+                    description:  Fail operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorRes'
+    
+    /login:
+        'post':
+            tags:
+                - Register & Auth
+            summary:  Login with signature + pubId 
+            operationId:  login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                signature:
+                                    type: string
+                                    example: 'dwuigduywgduywgd4156448'
+                                pubId:
+                                    $ref: '#/components/schemas/publicId'
+            responses:
+                '200':
+                    description: 'Successful operation will send token back'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AuthRes'
+                '400':
+                    description: 'When signature or pubId not correct'
+                    content:
+                        application/json:
+                            schema: 
+                                $ref: '#/components/schemas/ErrorRes'
+# User 
+    /user/profile/{userId}:
+        'get':
+            security:
+              - bearerAuth: []
+            tags:
+              - User
+            summary: Get user profile By user id
+            operationId: getUserById
+            parameters:
+                -   name: userId
+                    in: path
+                    required: true
+                    schema: 
+                        type: string
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema: 
+                                $ref: '#/components/schemas/User'
+                '401':
+                    description: 'When not have token'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedErrorRes'
+
+    /user/project/{userId}:
+        'get':
+            security:
+                -  bearerAuth: []
+            tags:
+              - "User"
+            summary: Get all project (just some info) by user id
+            description: ใช้เพื่อไปโชว์แค่ภาพหน้าปก จำนวนเงิน ชื่อโปรเจค
+            operationId: getAllProjectCardByUserId
+            parameters:
+                -   name: userId
+                    in: path
+                    required: true
+                    schema: 
+                        type: string
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/ProjectCard'
+                '401':
+                    description: 'When not have token'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedErrorRes'
+
+    /user/history/{userId}:
+        'get':
+            security:
+                -  bearerAuth: []
+            tags:
+              - "User"
+            summary: Get all history to show
+            operationId: gatHistoryByUserId
+            parameters:
+                -   name: userId
+                    in: path
+                    required: true
+                    schema: 
+                        type: string
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/History'
+                '401':
+                    description: 'When not have token'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnauthorizedErrorRes'
+components:
+    securitySchemes:
+
+        bearerAuth: 
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+
+    schemas:
+
+        token:
+            type: string
+            example: 'xspda1589Xiwd.kfeovi468885.feAijojdjwood'
+
+        publicId:
+            type: string
+            example: 'djicdwkopdowpkdwpdkwopd13546456'
+
+        ErrorRes:
+            type: object
+            properties:
+                status:
+                    type: boolean
+                    example: false
+                error:
+                    type: string
+                    example: Error will show here
+        
+        UnauthorizedErrorRes:
+            type: object
+            properties:
+                status:
+                    type: boolean
+                    example: false
+                error:
+                    type: string
+                    example: Access token is missing or invalid
+
+        AuthRes:
+            type: object
+            properties:
+                status:
+                    type: boolean
+                    example: true
+                error:
+                    type: string
+                    example: null
+                token:
+                    $ref: '#/components/schemas/token'
+        
+        User:
+            type: object
+            properties:
+                userId:
+                    $ref: '#/components/schemas/publicId'
+                username:
+                    type: string
+                    example: Taksin ShinJuKu
+                aboutMe:
+                    type: string
+                    example: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. 
+                education:
+                    type: string
+                    example: dwdwdd
+                contact: 
+                    type: object
+                    properties:
+                        email:
+                            type: string
+                            example: 'shia@hotmail.com'
+                        location:
+                            type:  string
+                            example: 'Thailand'
+                        portfolio:
+                            type: string
+                            example: https://google.com
+                        website:
+                            type: string
+                            example: https://google.com
+                skills:
+                        type: array
+                        example: ['C#', 'Java']
+
+        ProjectCard:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: 'Example Project'
+                img:
+                    type: string
+                    example: 'https://pbs.twimg.com/profile_images/1324357023602036736/UpKepdqi_400x400.jpg'
+                money:
+                    type: number
+                    example: 0.1654165464848
+                description:
+                    type: string
+                    example: 'dkwodjowijdwojdwoidjwoidjowidjwojdojdowjdowjdo'
+                linkToProject:
+                    type: string
+                    example: 'project/djiowjo1564dw'
+
+        History:
+            type: object
+            properties:
+                date: 
+                    type: string
+                    example: 22/12/2022 8:03 PM
+                donatedTo:
+                    type: string
+                    example: 'Example Project'
+                amount:
+                    type: number
+                    format: double
+                    example: 0.00002
+
+security:
+    - bearerAuth: []

@@ -1,0 +1,26 @@
+{
+  "name": "just-sail-it-api-spec",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "doc": "node index.js & prism mock api_spec.yml",
+    "mock": "prism mock api_spec.yml",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IamTakaiii/Just-Sail-It-API-Spec.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IamTakaiii/Just-Sail-It-API-Spec/issues"
+  },
+  "homepage": "https://github.com/IamTakaiii/Just-Sail-It-API-Spec#readme",
+  "dependencies": {
+    "@stoplight/prism-cli": "^4.10.5",
+    "express": "^4.18.2"
+  }
+}
