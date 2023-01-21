@@ -282,5 +282,5 @@ components:
                     format: double
                     example: 0.00002
 
-security:
-    - bearerAuth: []
+# security:
+#     - bearerAuth: []
